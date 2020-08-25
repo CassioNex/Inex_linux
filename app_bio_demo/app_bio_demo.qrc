@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>nice_logo.png</file>
+        <file>nice_logo_mono.bmp</file>
+    </qresource>
+</RCC>
