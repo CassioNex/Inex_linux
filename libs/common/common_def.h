@@ -26,7 +26,7 @@
 #define ALG_V1_0        0
 #define ALG_V2_0        1
 #define ALG_V_PC        2
-#define VERSAO_ALG      ALG_V1_0
+#define VERSAO_ALG      ALG_V_PC
 //! [Versao do algoritmo de biometria]
 
 #endif /* COMMON_DEF_H_ */

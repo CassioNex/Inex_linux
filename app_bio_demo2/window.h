@@ -37,7 +37,7 @@ private:
      QPushButton *bt_enroll;
      QPushButton *bt_search;
      QElapsedTimer *timer;
-     QLabel *lb_enroll_cnt;
+     QLabel *vl_enroll_cnt;
 };
 
 #endif // WINDOW_H

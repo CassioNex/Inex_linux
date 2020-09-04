@@ -24,7 +24,22 @@ Window::Window(QWidget *parent) : QWidget(parent)
     bt_enroll = new QPushButton("Enroll");
     bt_search = new QPushButton("Search");
     timer     = new QElapsedTimer;
-    lb_enroll_cnt = new QLabel;
+    vl_enroll_cnt = new QLabel;
+    QLabel *lb_enroll_cnt = new QLabel("Enrolls: ");
+
+    // Define as fontes de texto
+    QFont ft;
+    ft.setPointSize(10);
+    ft.setBold(false);
+
+    QFont fv;
+    fv.setPointSize(10);
+    fv.setBold(true);
+
+    lb_enroll_cnt->setFont(ft);
+    cb_mode->setFont(ft);
+
+    vl_enroll_cnt->setFont(fv);
 
     // Conecta signal de imagem capturada ao slot de tratamento
     QObject::connect(dp, &DataProvider::img_captured, this, &Window::handleImgCaptured);
@@ -43,6 +58,7 @@ Window::Window(QWidget *parent) : QWidget(parent)
 
     h_lay->addWidget(cb_mode);
     h_lay->addWidget(lb_enroll_cnt);
+    h_lay->addWidget(vl_enroll_cnt);
 
     layout->addWidget(logo);
     layout->addWidget(title);
@@ -63,11 +79,16 @@ Window::Window(QWidget *parent) : QWidget(parent)
 // Slots
 void Window::handleImgCaptured(uint8_t *buf)
 {
+    // Apaga leds
+    write(finger_img->m_fd_led_ok, "0", 2);
+    write(finger_img->m_fd_led_error, "0", 2);
+    // Dispara timer
     timer->start();
+    // Trata enroll/search
     finger_img->handleImgCaptured(buf);
     qDebug() << "HandleImgCapture() levou " << timer->elapsed() << "milliseconds";
     // Atualiza o label de templates aprendidos
-    lb_enroll_cnt->setText(QString::number(finger_img->enroll_cnt));
+    vl_enroll_cnt->setText(QString::number(finger_img->enroll_cnt));
 }
 
 void Window::cb_mode_clicked()

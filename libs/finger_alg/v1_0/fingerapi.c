@@ -7047,7 +7047,7 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
 	for (i = 0; i < nMin; i++) {
 		idx = pIndexArray[i];
 		if ( idx < 0 || idx >= nDBSize ) continue;
-		res = matching_main(&pDBVect[idx*MAX_FEATUREVECT_LEN],pVect,securitylevel);
+		res = matching_main(&pDBVect[idx],pVect,securitylevel);
 		if ( res == 1 ) {
 			free(pIndexArray);
 			return (idx);

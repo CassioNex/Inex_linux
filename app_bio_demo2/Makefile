@@ -55,7 +55,7 @@ SOURCES       = main.cpp \
 		finger_img.cpp \
 		window.cpp \
 		../libs/fpc1011f3/fpc1011f3.c \
-		../libs/finger_alg/v1_0/fingerapi.c qrc_app_bio_demo.cpp \
+		../libs/finger_alg/v_pc/fingerapi.c qrc_app_bio_demo.cpp \
 		moc_data_provider.cpp \
 		moc_finger_img.cpp \
 		moc_window.cpp
@@ -143,13 +143,13 @@ DIST          = ../../buildroot/output/host/mkspecs/features/spec_pre.prf \
 		../libs/common/var.h \
 		../libs/common/common_def.h \
 		../libs/fpc1011f3/fpc1011f3.h \
-		../libs/finger_alg/v1_0/fingerapi.h \
-		../libs/finger_alg/v1_0/consttable.h main.cpp \
+		../libs/finger_alg/v_pc/fingerapi.h \
+		../libs/finger_alg/v_pc/consttable.h main.cpp \
 		data_provider.cpp \
 		finger_img.cpp \
 		window.cpp \
 		../libs/fpc1011f3/fpc1011f3.c \
-		../libs/finger_alg/v1_0/fingerapi.c
+		../libs/finger_alg/v_pc/fingerapi.c
 QMAKE_TARGET  = app_bio_demo2
 DESTDIR       = 
 TARGET        = app_bio_demo2
@@ -324,8 +324,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents app_bio_demo.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../buildroot/output/host/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents data_provider.h finger_img.h window.h ../libs/common/var.h ../libs/common/common_def.h ../libs/fpc1011f3/fpc1011f3.h ../libs/finger_alg/v1_0/fingerapi.h ../libs/finger_alg/v1_0/consttable.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp data_provider.cpp finger_img.cpp window.cpp ../libs/fpc1011f3/fpc1011f3.c ../libs/finger_alg/v1_0/fingerapi.c $(DISTDIR)/
+	$(COPY_FILE) --parents data_provider.h finger_img.h window.h ../libs/common/var.h ../libs/common/common_def.h ../libs/fpc1011f3/fpc1011f3.h ../libs/finger_alg/v_pc/fingerapi.h ../libs/finger_alg/v_pc/consttable.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp data_provider.cpp finger_img.cpp window.cpp ../libs/fpc1011f3/fpc1011f3.c ../libs/finger_alg/v_pc/fingerapi.c $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1837,9 +1837,9 @@ fpc1011f3.o: ../libs/fpc1011f3/fpc1011f3.c ../libs/fpc1011f3/fpc1011f3.h \
 		../libs/common/var.h
 	$(CC) -c $(CFLAGS) $(INCPATH) -o fpc1011f3.o ../libs/fpc1011f3/fpc1011f3.c
 
-fingerapi.o: ../libs/finger_alg/v1_0/fingerapi.c ../libs/finger_alg/v1_0/consttable.h \
-		../libs/finger_alg/v1_0/fingerapi.h
-	$(CC) -c $(CFLAGS) $(INCPATH) -o fingerapi.o ../libs/finger_alg/v1_0/fingerapi.c
+fingerapi.o: ../libs/finger_alg/v_pc/fingerapi.c ../libs/finger_alg/v_pc/consttable.h \
+		../libs/finger_alg/v_pc/fingerapi.h
+	$(CC) -c $(CFLAGS) $(INCPATH) -o fingerapi.o ../libs/finger_alg/v_pc/fingerapi.c
 
 qrc_app_bio_demo.o: qrc_app_bio_demo.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_app_bio_demo.o qrc_app_bio_demo.cpp

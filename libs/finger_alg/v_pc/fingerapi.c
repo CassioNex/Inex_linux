@@ -4084,7 +4084,7 @@ void decomp_mp(BYTE *pData,MPVECTEX *pVect)
 
 void mch_sub_func_02(LPFPFEATURE pFeature,LPFPVECTEX pFPEx)
 {
-	int n, nNum, nSize;
+    volatile int n, nNum, nSize;
 	BYTE nMark;
 
 	memset(pFPEx,0,sizeof(FPVECTEX));
@@ -7024,7 +7024,7 @@ int matching_main(LPFPFEATURE pFeatureVect1,LPFPFEATURE pFeatureVect2,int securi
 	if ( mch_sub_func_03(&Vect2) == FALSE ) return (0);
 	TmpVect2 = Vect2;
 
-ViewFPEx[0] = Vect1; ViewFPEx[1] = Vect2;
+    ViewFPEx[0] = Vect1; ViewFPEx[1] = Vect2;
 
 	nCoarse = coarse_matching(&Vect1,&Vect2);
 	if ( nCoarse == -1 ) return (0);
@@ -7291,9 +7291,12 @@ int finger_match(BYTE* pFeature1,BYTE* pFeature2,int securitylevel)
 	if (res < 0) res = 0;
 	if (res > 1000) res = 1000;
 
+    /* Envia res diretamente (score)
 	// Padroniza retorno em 1 (match) ou <0 (no match)
 	if ( res >= nTh ) return ERR_OK;
 	return ERR_MATCH_FAILED;
+    */
+    return res;
 }
 
 /*
@@ -7336,11 +7339,11 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
 	*/
 	nRealIdentNum = nDBSize;
 
-	for ( i=0; i<nRealIdentNum; i++ ){
+    for ( i=0; i<nRealIdentNum; i++ ) {
 		idx = pIndexArray[i];
 		if ( idx < 0 || idx >= nDBSize ) continue;
-		res = matching_main(&pDBVect[idx*MAX_FEATUREVECT_LEN],pVect,securitylevel);
-		if ( res >= nTh ){
+        res = matching_main(&pDBVect[idx], pVect, securitylevel);
+        if ( res >= nTh ) {
 			free(pIndexArray);
 			return (idx);
 		}

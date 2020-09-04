@@ -17,11 +17,11 @@ extern "C" {
 #define DWORD				unsigned long
 #define USHORT				unsigned short
 
-#define MAX_FEATUREVECT_LEN					512
+#define MAX_FEATUREVECT_LEN			512
 
-#define HIGH_LEVEL							2
-#define MEDIUM_LEVEL						1
-#define LOW_LEVEL							0
+#define HIGH_LEVEL					2
+#define MEDIUM_LEVEL				1
+#define LOW_LEVEL					0
 
 #define ERR_NO						 0	
 #define ERR_OK						 1
@@ -32,8 +32,8 @@ extern "C" {
 #define	ERR_VECT_FAILED			    -31  
 #define	ERR_INVALID_IMAGESIZE		-41
 
-#define MAX_IMG_WIDTH			640 
-#define MAX_IMG_HEIGHT			640 
+#define MAX_IMG_WIDTH			200 //640
+#define MAX_IMG_HEIGHT			200 //640
 #define MAX_IMG_SIZE			MAX_IMG_WIDTH*MAX_IMG_HEIGHT
 
 #define MAX_HEADER_SIZE			8
@@ -51,14 +51,14 @@ extern "C" {
 #define DELTA			        0
 
 #define MAX_CORE_NUMBER         4
-#define MAX_SP_NUMBER           30
+#define MAX_SP_NUMBER           4 //30
 
 #define BLOCK_SIZE              16
 #define MAX_BLOCK_ROW           18
 #define MAX_BLOCK_COL           16
 #define MAX_BLOCK_NUMBER        (MAX_BLOCK_ROW*MAX_BLOCK_COL)
 
-#define	MAX_BAR_NUM				1000
+#define	MAX_BAR_NUM				600 //1000
 #define	MAX_SEARCH_BAR_NUM		500
 
 #define	MATCH_TH_HIGH			100

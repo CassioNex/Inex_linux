@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.2, 2020-08-25T17:18:44. -->
+<!-- Written by QtCreator 4.5.2, 2020-09-04T11:09:34. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -268,18 +268,23 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
        <value type="QString">/home/cassio/app_bio_demo2/app_bio_demo2</value>
+       <value type="QString">/home/cassio/inovanex/app_bio_demo2/app_bio_demo2</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.0.3</value>
        <value type="QString">192.168.0.3</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
        <value type="QString">/usr/bin</value>
+       <value type="QString">/usr/bin</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots">
+       <value type="QString">/home/cassio/buildroot/output/host/arm-buildroot-linux-gnueabihf/sysroot</value>
        <value type="QString">/home/cassio/buildroot/output/host/arm-buildroot-linux-gnueabihf/sysroot</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
        <value type="QDateTime">2020-08-25T12:09:06</value>
+       <value type="QDateTime">2020-09-04T09:12:19</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>

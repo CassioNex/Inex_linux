@@ -3368,7 +3368,8 @@ int ext_main(unsigned char* image,int width,int height,LPFPFEATURE pFeatureVect)
 	memset(pFeatureVect, 0, sizeof(MINUTIAVECT));
 	memset(&FPEx, 0, sizeof(FPVECTEX));
 
-	/*image_buffer3 = (BYTE*)calloc(cxDIB*cyDIB, sizeof(BYTE));
+    /*
+    image_buffer3 = (BYTE*)calloc(cxDIB*cyDIB, sizeof(BYTE));
 	if (image_buffer3 == NULL)  return ERR_CAN_NOT_ALLOC_MEMORY;
 
 	image_buffer1 = (USHORT*)malloc(sizeof(USHORT)*cxDIB*cyDIB);
@@ -3378,7 +3379,8 @@ int ext_main(unsigned char* image,int width,int height,LPFPFEATURE pFeatureVect)
 	if (image_buffer2 == NULL) { free(image_buffer1); free(image_buffer3); return ERR_CAN_NOT_ALLOC_MEMORY; }
 
 	image_buffer4 = (BYTE*)malloc(sizeof(BYTE)*cxDIB*cyDIB);
-	if (image_buffer4 == NULL) { free(image_buffer2); free(image_buffer1); free(image_buffer3); return ERR_CAN_NOT_ALLOC_MEMORY; }*/
+    if (image_buffer4 == NULL) { free(image_buffer2); free(image_buffer1); free(image_buffer3); return ERR_CAN_NOT_ALLOC_MEMORY; }
+    */
 
 	image_buffer3 = image + cxDIB*cyDIB;
 	image_buffer2 = image_buffer3 + cxDIB*cyDIB;
@@ -7078,7 +7080,7 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel,
 	for (i = 0; i < nMin; i++) {
 		idx = pIndexArray[i];
 		if ( idx < 0 || idx >= nDBSize ) continue;
-		res = matching_main(&pDBVect[idx*MAX_FEATUREVECT_LEN],pVect,securitylevel,img);
+		res = matching_main(&pDBVect[idx],pVect,securitylevel,img);
 		if ( res == 1 ) {
 			free(pIndexArray);
 			return (idx);

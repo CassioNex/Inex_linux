@@ -20,7 +20,7 @@ SOURCES += \
     finger_img.cpp \
     window.cpp \
     ../libs/fpc1011f3/fpc1011f3.c \
-    ../libs/finger_alg/v1_0/fingerapi.c
+    ../libs/finger_alg/v_pc/fingerapi.c
 
 INSTALLS += target
 target.path = /usr/bin
@@ -32,8 +32,8 @@ HEADERS += \
     ../libs/common/var.h \
     ../libs/common/common_def.h \
     ../libs/fpc1011f3/fpc1011f3.h \
-    ../libs/finger_alg/v1_0/fingerapi.h \
-    ../libs/finger_alg/v1_0/consttable.h
+    ../libs/finger_alg/v_pc/fingerapi.h \
+    ../libs/finger_alg/v_pc/consttable.h
 
 RESOURCES += \
     app_bio_demo.qrc

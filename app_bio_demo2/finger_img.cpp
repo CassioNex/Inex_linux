@@ -14,16 +14,47 @@ FingerImg::FingerImg(QWidget *parent) : QWidget(parent)
     }
     */
 
+    // Define os layouts
+    QHBoxLayout *hlay   = new QHBoxLayout;
     QVBoxLayout *layout = new QVBoxLayout;
 
-    QLabel *title = new QLabel(tr("Finger Image"));
-    title->setAlignment(Qt::AlignHCenter);
+    // Define as fontes de texto
+    QFont ft;
+    ft.setPointSize(10);
+    ft.setBold(false);
 
+    QFont fv;
+    fv.setPointSize(10);
+    fv.setBold(true);
+
+    QLabel *lb_score = new QLabel(tr("Score: "));
+    lb_score->setAlignment(Qt::AlignHCenter);
+    lb_score->setFont(ft);
+
+    vl_score = new QLabel;
+    vl_score->setAlignment(Qt::AlignHCenter);
+    vl_score->setFont(fv);
+
+    QLabel *lb_index = new QLabel(tr("Pos: "));
+    lb_index->setAlignment(Qt::AlignHCenter);
+    lb_index->setFont(ft);
+
+    vl_index = new QLabel;
+    vl_index->setAlignment(Qt::AlignHCenter);
+    vl_index->setFont(fv);
+
+    // Adiciona os widgets aos layouts
+    hlay->addWidget(lb_score);
+    hlay->addWidget(vl_score);
+    hlay->addWidget(lb_index);
+    hlay->addWidget(vl_index);
+
+    // Objeto para exibir imagem do fingerprint
     finger = new QLabel();
     finger->setAlignment(Qt::AlignHCenter);
     finger->setPixmap(QPixmap(N_COL, N_LIN));
 
-    layout->addWidget(title);
+    layout->addLayout(hlay);
     layout->addWidget(finger);
 
     setLayout(layout);
@@ -55,6 +86,8 @@ void FingerImg::handleImgCaptured(uint8_t *buf)
     */
     int search_res;
     int match_res;
+    static int match_res_n1;
+
 
     /* Não aloca no stack, usa heap (ver construtora)
     static uint8_t feature_enroll[MAX_FEATUREVECT_LEN];
@@ -76,6 +109,7 @@ void FingerImg::handleImgCaptured(uint8_t *buf)
         pfeature_db     = (uint8_t *)malloc(sizeof(uint8_t)*MAX_FEATUREVECT_LEN*N_TEMPLATES);
         pdb_enroll      = pfeature_db;
         pdb_search      = pfeature_db;
+        memset(pfeature_db, 0, sizeof(uint8_t)*MAX_FEATUREVECT_LEN*N_TEMPLATES);
         flag = true;
     }
 
@@ -102,6 +136,9 @@ void FingerImg::handleImgCaptured(uint8_t *buf)
 
     // Enroll mode - salva template no database buffer
     if (m_mode == ENROLL_MODE) {
+        // Apaga score e index
+        vl_score->setText(NULL);
+        vl_index->setText(NULL);
         // Extrai o template (feature extraction)
         if (create_template((BYTE*)/*img_buf*/buf, N_COL, N_LIN, (BYTE*)pfeature_enroll) == 1) {
            qDebug() << "Template extracted!";
@@ -121,44 +158,65 @@ void FingerImg::handleImgCaptured(uint8_t *buf)
         if (create_template((BYTE*)/*img_buf*/buf, N_COL, N_LIN, (BYTE*)pfeature_search) == 1) {
            qDebug() << "Template extracted!";
            // Faz a busca no database
-           /* Tentativa de uso da função finger_search - não está funcionando.
+#ifdef USA_SEARCH
+    #if (VERSAO_ALG != ALG_V2_0)
            search_res = finger_search((BYTE *)pfeature_search, (BYTE *)pfeature_db, N_TEMPLATES, MEDIUM_LEVEL);
-           if (search_res < 0) {
-              qDebug() << "Fingerprint not in database!";
-           }
-           else {
-               qDebug() << "Fingerprint in database position: " << search_res << "!";
-           }
-           */
+    #else
+           search_res = finger_search((BYTE *)pfeature_search, (BYTE *)pfeature_db, N_TEMPLATES, MEDIUM_LEVEL, (BYTE *)/*img_buf*/buf);
+    #endif
+#else
            // Usando apenas finger_match
            // Reposiciona pointer no início do db
            pdb_search = pfeature_db;
            // Inicializa search_res
            search_res = -1;
+           // Inicializa match_res anterior
+           match_res_n1 = 0;
            for (int i = 0; i < N_TEMPLATES; i++) {
-#if (VERSAO_ALG != ALG_V2_0)
+    #if (VERSAO_ALG != ALG_V2_0)
                 match_res = finger_match((BYTE *)pfeature_search, (BYTE *)pdb_search, MEDIUM_LEVEL);
-#else
+    #else
                 match_res = finger_match((BYTE *)pfeature_search, (BYTE *)pdb_search, MEDIUM_LEVEL, (BYTE *)/*img_buf*/buf);
-#endif
+    #endif
+
+    #if (VERSAO_ALG == ALG_V_PC)
+                if (match_res > match_res_n1) {
+                    match_res_n1 = match_res;
+                    if (match_res >= TH_MATCH) {
+                        search_res = i;
+                    }
+                }
+                // Próxima busca
+                pdb_search += MAX_FEATUREVECT_LEN;
+           }
+    #else
                 if (match_res == 1) {
                     search_res = i;
-                    qDebug() << "Fingerprint in database position: " << search_res << "!";
-                    write(m_fd_led_ok, "1", 2);
-                    write(m_fd_led_error, "0", 2);
                     break;
                 }
                 // Próxima busca
                 pdb_search += MAX_FEATUREVECT_LEN;
            }
+    #endif
+#endif
            if (search_res < 0) {
                qDebug() << "Fingerprint not in database!";
                write(m_fd_led_ok, "0", 2);
                write(m_fd_led_error, "1", 2);
            }
+           else {
+               qDebug() << "Fingerprint in database position: " << search_res << "!";
+               write(m_fd_led_ok, "1", 2);
+               write(m_fd_led_error, "0", 2);
+           }
+           // Exibe o score e o index
+           vl_score->setText(QString::number(match_res_n1));
+           vl_index->setText(QString::number(search_res));
         }
         else {
             qDebug() << "Error on template extraction!";
+            vl_score->setText(NULL);
+            vl_index->setText(NULL);
         }
     }
 }
