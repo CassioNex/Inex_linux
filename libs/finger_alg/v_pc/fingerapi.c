@@ -7227,9 +7227,13 @@ void sch_sub_func_02(int *pScore,int nSize,int *pIndex)
 {
 	int i, j, tmp, nMin;
 
-	for ( i=0; i<nSize; i++ ) pIndex[i] = i;
+    for ( i=0; i<nSize; i++ ) {
+        pIndex[i] = i;
+    }
 	nMin = nSize - 1;
-	if ( nMin > 50 ) nMin = 50;
+    if ( nMin > N_TEMPLATES_SCORED ) {
+        nMin = N_TEMPLATES_SCORED;
+    }
 	for ( i=0; i<nMin; i++ ){
 		for ( j=i+1; j<nSize; j++ ){
 			if ( pScore[pIndex[i]] < pScore[pIndex[j]] ){
@@ -7299,6 +7303,7 @@ int finger_match(BYTE* pFeature1,BYTE* pFeature2,int securitylevel)
     return res;
 }
 
+// Modificação: insere score como parâmetro de saída.
 /*
  *	fingerprint searching function.
  *  parameter ;
@@ -7306,11 +7311,12 @@ int finger_match(BYTE* pFeature1,BYTE* pFeature2,int securitylevel)
  *		pDBFeature : pointer to buffer of fingerprint features(size is 512 * nDBSize bytes)
  *		nDBSize : number of fingerprint feature in database
  *		securitylevel : value of security level (default - MEDIUM_LEVEL)
+ *              pscore : score level of matched template (out parameter)
  *  return value ;
  *		if success, return the index value of matched fingerprint feature (0 ~ nDBSize).
  *		if failed, return error code ( < 0 ).
  */
-int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
+int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel, int* pscore)
 {
 	int i, idx, res, nRealIdentNum;
 	int *pIndexArray;
@@ -7320,7 +7326,6 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
 
 	if ( securitylevel == HIGH_LEVEL )	nTh = MATCH_TH_HIGH;
 	if ( securitylevel == LOW_LEVEL )	nTh = MATCH_TH_LOW;
-
 
 	if ( nDBSize < 1 ) return ERR_GENERAL_ERROR;
 	pIndexArray = (int*)malloc(sizeof(int)*nDBSize);
@@ -7333,24 +7338,24 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
 		}
 	}
 
-	/* Percorre o banco inteiro de templates
-	nRealIdentNum = 50 + 50*(nDBSize / 10000);
-	if ( nRealIdentNum > nDBSize) nRealIdentNum = nDBSize;
-	*/
-	nRealIdentNum = nDBSize;
+        // Não percorre o banco inteiro de templates,
+        // apenas uma fração, para otimizar tempo de busca.
+        nRealIdentNum = N_TEMPLATES_SCORED /*nDBSize*/;
 
-    for ( i=0; i<nRealIdentNum; i++ ) {
-		idx = pIndexArray[i];
-		if ( idx < 0 || idx >= nDBSize ) continue;
-        res = matching_main(&pDBVect[idx], pVect, securitylevel);
-        if ( res >= nTh ) {
-			free(pIndexArray);
-			return (idx);
-		}
-	}		
+        for ( i=0; i<nRealIdentNum; i++ ) {
+            idx = pIndexArray[i];
+            if ( idx < 0 || idx >= nDBSize ) continue;
+            res = matching_main(&pDBVect[idx], pVect, securitylevel);
+            if ( res >= nTh ) {
+                free(pIndexArray);
+                *pscore = res;
+                return (idx);
+            }
+        }
 
-	free(pIndexArray);
-	return (ERR_MATCH_FAILED);
+        free(pIndexArray);
+        *pscore = res;
+        return (ERR_MATCH_FAILED);
 }
 
 /*

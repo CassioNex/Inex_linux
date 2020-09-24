@@ -6721,6 +6721,7 @@ int point_matching(LPFPVECTEX pFile,LPFPVECTEX pSearch,PAIRVECT *pPair,BOOL nCol
 	return score_sum;
 }
 
+// Modificações: retorna sempre o score, e não apenas -1 ou 1.
 int matching_main(LPFPFEATURE pFeatureVect1,LPFPFEATURE pFeatureVect2,int securitylevel)
 {
 	FPVECTEX Vect1, Vect2, TmpVect1, TmpVect2;
@@ -6735,17 +6736,17 @@ int matching_main(LPFPFEATURE pFeatureVect1,LPFPFEATURE pFeatureVect2,int securi
 	mch_sub_func_02(pFeatureVect2,&Vect2);
 	TmpVect2 = Vect2;
 
-	if (mch_sub_func_03(&Vect1) == FALSE) return (-1);
-	if (mch_sub_func_03(&Vect2) == FALSE) return (-1);
+    if (mch_sub_func_03(&Vect1) == FALSE) return (0/*-1*/);
+    if (mch_sub_func_03(&Vect2) == FALSE) return (0/*-1*/);
 
 	nCoarse = coarse_matching(&Vect1,&Vect2);
 
 	if (nCoarse == 1) {
-		return (1);
+        return (1000/*1*/);
 	}
 
 	if (type_matching(&Vect1,&Vect2) == FALSE) {
-		return (-1);
+        return (0/*-1*/);
 	}
 
 	score = point_matching(&Vect1,&Vect2,&pPair,FALSE,TRUE,nTh,&nGlobalScore);
@@ -6753,11 +6754,11 @@ int matching_main(LPFPFEATURE pFeatureVect1,LPFPFEATURE pFeatureVect2,int securi
 		Vect1 = TmpVect1; Vect2 = TmpVect2;
 		score = point_matching(&Vect2,&Vect1,&pPair,FALSE,TRUE,nTh,&nGlobalScore);
 		if (score < nTh) {
-			if (nCoarse == 2 && score > nTh/2) return (1);
-			return (-1);
+            if (nCoarse == 2 && score > nTh/2) return (score/*1*/);
+            return (score/*-1*/);
 		}
 	}
-	return (1);
+    return (score/*1*/);
 }
 
 void sch_sub_func_03(LPMPVECTEX pVect,int cx,int cy,int nAngle,int nDiffX,int nDiffY)
@@ -6970,6 +6971,7 @@ BOOL sch_sub_func(LPFPFEATURE pFeatureVect,LPFPFEATURE pDataBaseVects,int nDataB
   
 // exported function //
 
+// Modificação: retorna res (score).
 /*
  *	fingerprint matching function.
  *  parameter ;
@@ -6990,21 +6992,21 @@ int finger_match(BYTE* pFeature1,BYTE* pFeature2,int securitylevel)
 	if ( securitylevel == HIGH_LEVEL )	nTh = MATCH_TH_HIGH;
 	if ( securitylevel == LOW_LEVEL )	nTh = MATCH_TH_LOW;
 
-
 	if ( pFeature1 == NULL || pFeature2 == NULL ) return (0);
 	
 	res = matching_main(pVect1,pVect2,securitylevel);
-	/* O retorno da função matching_main é 1 ou -1!!!
 	if (res < 0) res = 0;
 	if (res > 1000) res = 1000;
 
-	if ( res >= nTh ) return ERR_OK;
-	return ERR_MATCH_FAILED;
-	*/
-	return (res);
+    /* Envia res diretamente (score)
+    // Padroniza retorno em 1 (match) ou <0 (no match)
+    if ( res >= nTh ) return ERR_OK;
+    return ERR_MATCH_FAILED;
+    */
+    return res;
 }
 
-
+// Modificação: insere score como parâmetro de saída.
 /*
  *	fingerprint searching function.
  *  parameter ;
@@ -7012,11 +7014,12 @@ int finger_match(BYTE* pFeature1,BYTE* pFeature2,int securitylevel)
  *		pDBFeature : pointer to buffer of fingerprint features(size is 512 * nDBSize bytes)
  *		nDBSize : number of fingerprint feature in database
  *		securitylevel : value of security level (default - MEDIUM_LEVEL)
+ *      pscore : score level of matched template (out parameter)
  *  return value ;
  *		if success, return the index value of matched fingerprint feature (0 ~ nDBSize).
  *		if failed, return error code ( < 0 ).
  */
-int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
+int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel, int* pscore)
 {
 	int i, idx, res, nMin;
 	short *pIndexArray;
@@ -7026,7 +7029,6 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
 
 	if ( securitylevel == HIGH_LEVEL )	nTh = MATCH_TH_HIGH;
 	if ( securitylevel == LOW_LEVEL )	nTh = MATCH_TH_LOW;
-
 
 	if ( nDBSize < 1 ) return ERR_GENERAL_ERROR;
 	pIndexArray = (short*)malloc(sizeof(int)*nDBSize);
@@ -7039,23 +7041,30 @@ int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel)
 		}
 	}
 
-	nMin = nDBSize;
-	/* Percorre o banco inteiro de templates
-	if (nMin > 10) nMin = 10;
-	*/
+    // Não percorre o banco inteiro de templates,
+    // apenas uma fração, para otimizar tempo de busca.
+    nMin = N_TEMPLATES_SCORED /*nDBSize*/;
 	
 	for (i = 0; i < nMin; i++) {
 		idx = pIndexArray[i];
 		if ( idx < 0 || idx >= nDBSize ) continue;
 		res = matching_main(&pDBVect[idx],pVect,securitylevel);
-		if ( res == 1 ) {
+        if ( res >= nTh /*== 1*/ ) {
 			free(pIndexArray);
+            if (res > 1000) {
+                res = 1000;
+            }
+            *pscore = res;
 			return (idx);
 		}
 	}		
 
 	free(pIndexArray);
-	return (ERR_MATCH_FAILED);
+    if (res > 1000) {
+        res = 1000;
+    }
+    *pscore = res;
+    return (ERR_MATCH_FAILED);
 }
 
 /*

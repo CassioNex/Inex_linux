@@ -9,13 +9,18 @@
 extern "C" {
 #endif
 
-#define BOOL				int 
-#define TRUE				1
-#define FALSE				0
-#define BYTE				unsigned char
-#define UINT				unsigned int
-#define DWORD				unsigned long
-#define USHORT				unsigned short
+// Parametriza n. de templates a serem ordenados
+// pelo score na função finger_search->sch_sub_func->sch_sub_func_02.
+// É também o n. de templates do loop da finger_search.
+#define N_TEMPLATES_SCORED          150 // Original: 50
+
+#define BOOL                        int
+#define TRUE                        1
+#define FALSE                       0
+#define BYTE                        unsigned char
+#define UINT                        unsigned int
+#define DWORD                       unsigned long
+#define USHORT                      unsigned short
 
 #define MAX_FEATUREVECT_LEN			512
 
@@ -32,50 +37,50 @@ extern "C" {
 #define	ERR_VECT_FAILED			    -31  
 #define	ERR_INVALID_IMAGESIZE		-41
 
-#define MAX_IMG_WIDTH			200 //640
-#define MAX_IMG_HEIGHT			200 //640
-#define MAX_IMG_SIZE			MAX_IMG_WIDTH*MAX_IMG_HEIGHT
+#define MAX_IMG_WIDTH               200 // Original: 640
+#define MAX_IMG_HEIGHT              200 // Original: 640
+#define MAX_IMG_SIZE                MAX_IMG_WIDTH*MAX_IMG_HEIGHT
 
-#define MAX_HEADER_SIZE			8
+#define MAX_HEADER_SIZE             8
 
-#define VERSION_NUMBER			0x40
+#define VERSION_NUMBER              0x40
 
-#define END_MINUTIA             0
-#define BIF_MINUTIA             1
+#define END_MINUTIA                 0
+#define BIF_MINUTIA                 1
 
-#define MAXMINUTIATAGNUM        300
-#define MAX_MINUTIA_NUMBER      50 
-#define MIN_MINUTIA_NUMBER      3
+#define MAXMINUTIATAGNUM            300
+#define MAX_MINUTIA_NUMBER          50
+#define MIN_MINUTIA_NUMBER          3
 
-#define CORE		            1
-#define DELTA			        0
+#define CORE                        1
+#define DELTA                       0
 
-#define MAX_CORE_NUMBER         4
-#define MAX_SP_NUMBER           4 //30
+#define MAX_CORE_NUMBER             4
+#define MAX_SP_NUMBER               4 // Original: 30
 
-#define BLOCK_SIZE              16
-#define MAX_BLOCK_ROW           18
-#define MAX_BLOCK_COL           16
-#define MAX_BLOCK_NUMBER        (MAX_BLOCK_ROW*MAX_BLOCK_COL)
+#define BLOCK_SIZE                  16
+#define MAX_BLOCK_ROW               18
+#define MAX_BLOCK_COL               16
+#define MAX_BLOCK_NUMBER            (MAX_BLOCK_ROW*MAX_BLOCK_COL)
 
-#define	MAX_BAR_NUM				600 //1000
-#define	MAX_SEARCH_BAR_NUM		500
+#define	MAX_BAR_NUM                 600 // Original: 1000
+#define	MAX_SEARCH_BAR_NUM          500
 
-#define	MATCH_TH_HIGH			100
-#define	MATCH_TH_MEDIUM			50
-#define	MATCH_TH_LOW			40
+#define	MATCH_TH_HIGH               150 // Original: 100
+#define	MATCH_TH_MEDIUM             100 // Original: 50
+#define	MATCH_TH_LOW                50  // Original: 40
 
-#define	ANGLE                   10
-#define	LENGTH                  13
+#define	ANGLE                       10
+#define	LENGTH                      13
 
-#define MAX_MAINLINE_NUM		100
-#define MAX_POINTNUM_OF_POLYGON 50
+#define MAX_MAINLINE_NUM            100
+#define MAX_POINTNUM_OF_POLYGON     50
 
-#define MP_SIZE					6
+#define MP_SIZE                     6
 
-#define MAX_SHIFT_X_SIZE        (MAX_IMG_WIDTH*2)
-#define MAX_SHIFT_Y_SIZE        (MAX_IMG_HEIGHT*2)
-#define MAX_SHIFT_SIZE          (MAX_SHIFT_X_SIZE)
+#define MAX_SHIFT_X_SIZE            (MAX_IMG_WIDTH*2)
+#define MAX_SHIFT_Y_SIZE            (MAX_IMG_HEIGHT*2)
+#define MAX_SHIFT_SIZE              (MAX_SHIFT_X_SIZE)
 
 #define min(a,b) (((a)<(b))?(a):(b))
 #define max(a,b) (((a)>(b))?(a):(b))
@@ -211,7 +216,7 @@ typedef struct
 
 int finger_match(BYTE* pFeature1,BYTE* pFeature2,int securitylevel);
 
-int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel);
+int finger_search(BYTE* pFeature,BYTE* pDBFeature,int nDBSize,int securitylevel, int* pscore);
 
 int create_template(BYTE* pImage,int nWidth,int nHeight,BYTE* pFeature);
 
@@ -220,4 +225,3 @@ int create_template(BYTE* pImage,int nWidth,int nHeight,BYTE* pFeature);
 #endif
 
 #endif // FINGERAPI_H
- 
