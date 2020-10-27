@@ -199,6 +199,7 @@
 #define __SA_IBIT__ 16
 #define __ULLACCUM_MIN__ 0.0ULLK
 #define __cpp_hex_float 201603
+#define __GCC_HAVE_DWARF2_CFI_ASM 1
 #define __GXX_ABI_VERSION 1013
 #define __UTA_FBIT__ 64
 #define __FLT_MIN_EXP__ (-125)
@@ -415,6 +416,7 @@
 #define __LLFRACT_IBIT__ 0
 #define __INT8_MAX__ 0x7f
 #define __LONG_WIDTH__ 32
+#define __OPTIMIZE_SIZE__ 1
 #define __UINT_FAST32_TYPE__ unsigned int
 #define __CHAR32_TYPE__ unsigned int
 #define __FLT_MAX__ 3.4028234663852886e+38F
