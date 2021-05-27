@@ -145,8 +145,10 @@ void FingerImg::handleImgCaptured(uint8_t *buf)
         vl_score->setText(NULL);
         vl_index->setText(NULL);
         // Extrai o template (feature extraction)
+        timer->start();
         if (create_template((BYTE*)/*img_buf*/buf, N_COL, N_LIN, (BYTE*)pfeature_enroll) == 1) {
            qDebug() << "Template extracted!";
+           qDebug() << "Template extraction spent: " << timer->elapsed() << "milliseconds";
            // Salva template no database buffer
            memcpy(pdb_enroll, pfeature_enroll, MAX_FEATUREVECT_LEN);
            pdb_enroll += MAX_FEATUREVECT_LEN;
@@ -160,8 +162,10 @@ void FingerImg::handleImgCaptured(uint8_t *buf)
     // Search mode
     else if (m_mode == SEARCH_MODE) {
         // Extrai o template (feature extraction)
+        timer->start();
         if (create_template((BYTE*)/*img_buf*/buf, N_COL, N_LIN, (BYTE*)pfeature_search) == 1) {
            qDebug() << "Template extracted!";
+           qDebug() << "Template extraction spent: " << timer->elapsed() << "milliseconds";
            // Faz a busca no database
 #ifdef USA_SEARCH
            // Inicializa score a ser exibido
