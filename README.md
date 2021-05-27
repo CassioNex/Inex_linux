@@ -1,4 +1,4 @@
-# inovanex - Linux / h7 libs
+# Inovanex - Linux / h7 libs
 Projetos de fw/sw - Instituto Inovanex - Linux dk2 board / libs h7 mcu
 
 Pastas:
